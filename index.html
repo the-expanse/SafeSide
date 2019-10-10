@@ -121,7 +121,6 @@
             if (!('FileReader' in window) || !('File' in window) || !blobSlice) {
                 registerLog('<p><strong>Your browser does not support the FileAPI or slicing of files.</strong></p>', 'error');
             } else {
-                registerLog('Keep your devtools closed otherwise this example will be a LOT slower', 'info');
                 if (/chrome/.test(ua)) {
                     if (location.protocol === 'file:') {
                         registerLog('<p><strong>This example might not work in chrome because you are using the file:// protocol.</strong><br/>You can try to start chrome with -allow-file-access-from-files argument or spawn a local server instead. This is a security measure introduced in chrome, please <a target=\'_blank\' href=\'http://code.google.com/p/chromium/issues/detail?id=60889\'>see</a>.</p>');
