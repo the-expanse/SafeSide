@@ -17,21 +17,30 @@
         </style>
   </head>
   <body class="container">
-        <h1>SparkMD5 file reader test, incremental and normal md5</h1>
+        <h1>Stay safe with SideQuest</h1>
 
-        <h4>Please note that the advantage of doing an incremental md5 is to keep memory usage low.</h4>
+        <h4>Piracy has many disadvantages, it puts users at risk with a high lightlyhood of malware/virus infections.</h4>
         <p>
-            Keep an eye on the memory usage of your browser. If you got chrome, open about:memory to see all the browsers memory usage (you must refresh continuously).
-            <br/>With normal md5, you should observe slightly faster times but high memory usage (because the entire file need to be read into an array).
-            <br/>With incremental md5, you should observe stable memory usage but slightly higher times.
-            <br/>Be aware that while using normal md5, the browser can crash due to high memory usage.
+            At SideQuest we are commited to keeping our users safe from malicious content, we also appreciate the damage that piracy can do 
+            to the still growing VR industry. What's different about the VR industry is that it's propped up by indie game studios and 
+            one man band developers not like console or PC gaming where billions of dollars have been made on AAA titles. When piracy 
+            negatively affects sales then these developers loose interest and stop developing. If this keep happening then the industry as a 
+            whole will not survive without the potential for a return on the huge investment of these indie developers. We are all riding 
+            the wave of the edge of the art of what's possible and we want to keep this momentum up so that we can get the latest technology 
+            to play with sooner rather than later. 
+        </p>
+        <h4>What is this and what does it do?</h4>
+        <p> 
+          This is a simple file scanner that will scan the file you submit and store it in our database. It scans the file inside your browser and does 
+          not upload to our servers. All that we store is whats called a hash which is a short string of characters like this - 2f90fe3b9b84cbb9727c053e0191d3ee
+          We can then use this to identify malicious content in the SideQuest app and protect users before it gets near their headset. 
+          This page is completely anonymous and will not store any identifiable information, and we appreciate you taking the time to do your part
+          for VR and its users. Feel free to review the source code for this service <a href="https://github.com/the-expanse/SafeSide/">here</a>.
         </p>
 
         <div class="actions">
             <input type="file" id="file" class="input-file span5"/>
-            <input type="button" id="normal" value="Normal" class="btn primary"/>
-            <input type="button" id="incremental" value="Incremental" class="btn primary"/>
-            <input type="button" id="clear" value="Clear" class="btn"/>
+            <input type="button" id="incremental" value="Scan File" class="btn primary"/>
         </div>
         <div id="log"></div>
 
@@ -80,9 +89,14 @@
                         loadNext();
                     } else {
                         running = false;
+                        let hash = spark.end();
                         registerLog('<strong>Finished loading!</strong><br/>', 'success');
-                        registerLog('<strong>Computed hash:</strong> ' + spark.end() + '<br/>', 'success'); // compute hash
+                        registerLog('<strong>Computed hash:</strong> ' + hash + '<br/>', 'success'); // compute hash
                         registerLog('<strong>Total time:</strong> ' + (new Date().getTime() - time) + 'ms<br/>', 'success');
+                        registerLog('Thanks so much for helping us with this, it really relies on the efforts of users like you.');
+                        fetch(
+                          "https://xpan.cc/submit-app-hash/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vyc19pZCI6MSwiYXBwc19pZCI6IjkwIiwiaWF0IjoxNTY1MTAzNjQ2fQ.CFnKmOXO5zWxH1WvRyideQHLvlkZLC2v8SQZOiENANE/"+hash
+                        )
                     }
                 };
                 fileReader.onerror = function () {
@@ -99,36 +113,6 @@
                 time = new Date().getTime();
                 loadNext();
             }
-            function doNormalTest() {
-                if (running) {
-                    return;
-                }
-                if (!input.files.length) {
-                    registerLog('<strong>Please select a file.</strong><br/>');
-                    return;
-                }
-                var fileReader = new FileReader(),
-                    file = input.files[0],
-                    time;
-                fileReader.onload = function (e) {
-                    running = false;
-                    if (file.size != e.target.result.length) {
-                        registerLog('<strong>ERROR:</strong> Browser reported success but could not read the file until the end.<br/>', 'error');
-                    } else {
-                        registerLog('<strong>Finished loading!</strong><br/>', 'success');
-                        registerLog('<strong>Computed hash:</strong> ' + SparkMD5.hashBinary(e.target.result) + '<br/>', 'success'); // compute hash
-                        registerLog('<strong>Total time:</strong> ' + (new Date().getTime() - time) + 'ms<br/>', 'success');
-                    }
-                };
-                fileReader.onerror = function () {
-                    running = false;
-                    registerLog('<strong>ERROR:</strong> FileReader onerror was triggered, maybe the browser aborted due to high memory usage.<br/>', 'error');
-                };
-                running = true;
-                registerLog('<strong>Starting normal test (' + file.name + ')</strong><br/>', 'info');
-                time = new Date().getTime();
-                fileReader.readAsBinaryString(file);
-            }
             function clearLog() {
                 if (!running) {
                     log.innerHTML = '';
@@ -143,9 +127,7 @@
                         registerLog('<p><strong>This example might not work in chrome because you are using the file:// protocol.</strong><br/>You can try to start chrome with -allow-file-access-from-files argument or spawn a local server instead. This is a security measure introduced in chrome, please <a target=\'_blank\' href=\'http://code.google.com/p/chromium/issues/detail?id=60889\'>see</a>.</p>');
                     }
                 }
-                document.getElementById('normal').addEventListener('click', doNormalTest);
                 document.getElementById('incremental').addEventListener('click', doIncrementalTest);
-                document.getElementById('clear').addEventListener('click', clearLog);
             }
         </script>
     </body>
